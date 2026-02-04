@@ -38,11 +38,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current user's role and business_id
-    const { data: currentUser, error: userError } = await userSupabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: currentUser, error: userError } = await (userSupabase as any)
       .from('users')
       .select('role, business_id')
       .eq('id', session.user.id)
-      .single();
+      .single() as { data: { role: string; business_id: string } | null; error: Error | null };
 
     if (userError || !currentUser) {
       return NextResponse.json(
@@ -85,7 +86,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create public.users profile
-    const { error: profileError } = await adminSupabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: profileError } = await (adminSupabase as any)
       .from('users')
       .insert({
         id: authData.user.id,
